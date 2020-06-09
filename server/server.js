@@ -9,8 +9,14 @@ const app = express();
 
 
 //para usar las rutas del usuario y las peticiones
+//deberiamos declarar todas las rutas o usar una
+// variable para realizar la importación de todas las rutas
+/*Enviamos las rutas a index.js para que esté ordenado
 app.use(require('./routes/usuario'));
-
+app.use(require('./routes/login'));*/
+//las enviamos al index entonces hacemos referencia a las rutas
+//Configuración global de rutas
+app.use(require('./routes/index'));
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))

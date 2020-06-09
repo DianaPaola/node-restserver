@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 
 const Usuario = require('../models/usuario');
+const { verificaToken, verificaAdminRol } = require('../middlewares/autenticacion');
 
 const app = express();
 const bodyParser = require('body-parser');
@@ -17,7 +18,14 @@ app.get('/', function(req, res) {
     res.json('Hello Diana Local') //si envio send, estoy enviando html, si envio json envio json
 })
 
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificaToken, (req, res) => {
+
+    /*return res.json({
+        usuario: req.usuario,
+        nombre: req.usuario.nombre,
+        email: req.usuario.email,
+    })*/
+
 
     let desde = req.query.desde || 0;
     let limite = req.query.limite || 5;
@@ -56,7 +64,7 @@ app.get('/usuario', function(req, res) {
 
 })
 
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificaToken, verificaAdminRol], function(req, res) {
 
         let body = req.body;
         //tenemos el objeto para grabar en la base de datos
@@ -107,7 +115,7 @@ app.post('/usuario', function(req, res) {
     }) //para crear registros
 
 
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verificaToken, verificaAdminRol], function(req, res) {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
@@ -134,7 +142,7 @@ app.put('/usuario/:id', function(req, res) {
 }); //para actualizar registros
 
 
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [verificaToken, verificaAdminRol], function(req, res) {
 
         let id = req.params.id;
         //Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {//eliminar fisicamente un registro
